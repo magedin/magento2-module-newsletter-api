@@ -1,0 +1,16 @@
+{
+    "name": "mcfadyen/module-newsletter-api",
+    "description": "Newsletter API Extension for Magento 2 helps simply subscribe an email to default newsletter subscriber by calling an API",
+    "type": "magento2-module",
+    "license": "proprietary",
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "McFadyen\\NewsletterApi\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

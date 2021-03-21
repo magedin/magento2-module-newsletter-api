@@ -17,9 +17,10 @@ McFadyen_NewsletterApi provides the API implemeneation for the Magento Newslette
 
 ##### 1. To get subscription status of a customer:
 
-  `GET /V1/newsletter/subscriptions/mine`
-  `Authorisation: Customer token`
-  `Response: 200 OK`
+  `GET /V1/newsletter/subscriptions/mine`  
+  `Authorisation: Customer token`  
+  `Response: 200 OK`  
+  
   ``` 
     {
     "id": 1,
@@ -27,13 +28,16 @@ McFadyen_NewsletterApi provides the API implemeneation for the Magento Newslette
     "status": 1
     }
   ```
+    
   ```
     Status : 1 --> SUBSCRIBED, 2 --> NOT_ACTIVE , 3 --> UNSUBSCRIBED , 4 --> UNCONFIRMED 
   ```
 ##### 2. To subscribe a customer:
-`POST /V1/newsletter/subscriptions/mine`
-`Authorisation: Customer token`
-`Response: 200 OK`
+
+`POST /V1/newsletter/subscriptions/mine`  
+`Authorisation: Customer token`  
+`Response: 200 OK`  
+
   ```
   {
     "success": true,
@@ -42,26 +46,31 @@ McFadyen_NewsletterApi provides the API implemeneation for the Magento Newslette
   ```
 
 ##### 3. To unsubscribe a customer:
-`DELETE /V1/newsletter/subscriptions/mine`
-`Authorisation: Customer token`
-`Response: 200 OK`
+
+`DELETE /V1/newsletter/subscriptions/mine`  
+`Authorisation: Customer token`  
+`Response: 200 OK`  
+
   ```
   {
-    "success": true,
+    "success": true,  
     "message": "You have been unsubscribed from the newsletter."
   }
   ```
 
 ##### 4. To subscribe a guest user with email:
-`POST /V1/newsletter/guest-subscriptions`
-`Authorisation : None`
-`Request Body:`
+
+`POST /V1/newsletter/guest-subscriptions`  
+`Authorisation : None`  
+`Request Body:`  
+
  ```
  {
     'email':'email_address'
  }
-  ```
-`Response: 200 OK`
+  ```  
+`Response: 200 OK`  
+
   ```
   {
     "success": true,

@@ -2,7 +2,7 @@
 
 ### Main Functionalities
 
-McFadyen_NewsletterApi provides the API implemeneation for the Magento Newsletter.
+McFadyen_NewsletterApi provides the API implementation for the Magento Newsletter.
 
 ### Version Dependency
 

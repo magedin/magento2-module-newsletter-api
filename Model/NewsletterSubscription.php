@@ -14,6 +14,7 @@ namespace MagedIn\NewsletterApi\Model;
 
 use Magento\Framework\DataObject;
 use MagedIn\NewsletterApi\Api\Data\NewsletterSubscriptionInterface;
+use Magento\Newsletter\Model\Subscriber;
 
 /**
  * Class NewsletterSubscription
@@ -25,16 +26,16 @@ class NewsletterSubscription extends DataObject implements NewsletterSubscriptio
     /**
      * @inheritdoc
      */
-    public function setId(int $id)
+    public function setSubscriberId(int $subscriberId): self
     {
-        $this->setData(self::SUBSCRIPTION_ID, $id);
+        $this->setData(self::SUBSCRIPTION_ID, $subscriberId);
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function setEmail(string $email)
+    public function setEmail(string $email): self
     {
         $this->setData(self::EMAIL, $email);
         return $this;
@@ -43,7 +44,7 @@ class NewsletterSubscription extends DataObject implements NewsletterSubscriptio
     /**
      * @inheritdoc
      */
-    public function setStatus($status)
+    public function setStatus($status): self
     {
         $this->setData(self::STATUS, $status);
         return $this;
@@ -52,7 +53,7 @@ class NewsletterSubscription extends DataObject implements NewsletterSubscriptio
     /**
      * @inheritdoc
      */
-    public function getId()
+    public function getSubscriberId(): int
     {
         return $this->_getData(self::SUBSCRIPTION_ID);
     }
@@ -60,7 +61,7 @@ class NewsletterSubscription extends DataObject implements NewsletterSubscriptio
     /**
      * @inheritdoc
      */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->_getData(self::EMAIL);
     }
@@ -68,8 +69,27 @@ class NewsletterSubscription extends DataObject implements NewsletterSubscriptio
     /**
      * @inheritdoc
      */
-    public function getStatus()
+    public function getStatus(): int
     {
-        return $this->_getData(self::STATUS);
+        return (int) $this->_getData(self::STATUS);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStatusDescription(): string
+    {
+        switch ($this->getStatus()) {
+            case Subscriber::STATUS_SUBSCRIBED:
+                return 'subscribed';
+            case Subscriber::STATUS_UNCONFIRMED:
+                return 'unconfirmed';
+            case Subscriber::STATUS_NOT_ACTIVE:
+                return 'not_active';
+            case Subscriber::STATUS_UNSUBSCRIBED:
+                return 'unsubscribed';
+            default:
+                return 'unknown';
+        }
     }
 }

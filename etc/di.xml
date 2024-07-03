@@ -16,4 +16,6 @@
                 type="MagedIn\NewsletterApi\Model\NewsletterManagement"/>
     <preference for="MagedIn\NewsletterApi\Api\Data\NewsletterSubscriptionInterface"
                 type="MagedIn\NewsletterApi\Model\NewsletterSubscription"/>
+    <preference for="MagedIn\NewsletterApi\Api\Data\OperationStatusInterface"
+                type="MagedIn\NewsletterApi\Model\OperationStatus"/>
 </config>

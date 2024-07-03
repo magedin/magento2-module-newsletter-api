@@ -12,8 +12,8 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
 
     <!-- Managing Customer Subscriptions -->
-    <route url="/V1/newsletter/subscriptions/mine" method="GET">
-        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="getSubscriptionForCustomer"/>
+    <route url="/V1/newsletter/subscription/mine" method="GET">
+        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="getSubscriptionByCustomerId"/>
         <resources>
             <resource ref="self" />
         </resources>
@@ -21,8 +21,8 @@
             <parameter name="customerId" force="true">%customer_id%</parameter>
         </data>
     </route>
-    <route url="/V1/newsletter/subscriptions/mine" method="POST">
-        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="subscribeCustomer"/>
+    <route url="/V1/newsletter/subscription/mine" method="POST">
+        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="subscribeByCustomerId"/>
         <resources>
             <resource ref="self" />
         </resources>
@@ -30,8 +30,8 @@
             <parameter name="customerId" force="true">%customer_id%</parameter>
         </data>
     </route>
-    <route url="/V1/newsletter/subscriptions/mine" method="DELETE">
-        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="unsubscribeCustomer"/>
+    <route url="/V1/newsletter/subscription/mine" method="DELETE">
+        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="unsubscribeByCustomerId"/>
         <resources>
             <resource ref="self" />
         </resources>
@@ -41,8 +41,16 @@
     </route>
 
     <!-- Managing Guest Subscriptions -->
-    <route url="/V1/newsletter/guest-subscriptions" method="POST">
-        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="subscribe"/>
+    <route url="/V1/newsletter/guest-subscription" method="POST">
+        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="subscribeByCustomerEmail"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+    <!-- Managing Guest Subscriptions -->
+    <route url="/V1/newsletter/guest-subscription" method="DELETE">
+        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="unsubscribeByCustomerEmail"/>
         <resources>
             <resource ref="anonymous" />
         </resources>

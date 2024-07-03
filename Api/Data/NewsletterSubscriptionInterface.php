@@ -31,10 +31,10 @@ interface NewsletterSubscriptionInterface
      *
      * set the internal id of the entity
      *
-     * @param int $id
+     * @param int $subscriberId
      * @return $this
      */
-    public function setId(int $id);
+    public function setSubscriberId(int $subscriberId): self;
 
     /**
      * Set E-Mail Address
@@ -44,7 +44,7 @@ interface NewsletterSubscriptionInterface
      * @param string $email
      * @return $this
      */
-    public function setEmail(string $email);
+    public function setEmail(string $email): self;
 
     /**
      * Set status
@@ -55,7 +55,7 @@ interface NewsletterSubscriptionInterface
      *
      * @return $this
      */
-    public function setStatus(int $status);
+    public function setStatus(int $status): self;
 
     /**
      * Get ID
@@ -64,7 +64,7 @@ interface NewsletterSubscriptionInterface
      *
      * @return int
      */
-    public function getId();
+    public function getSubscriberId(): int;
 
     /**
      * Get E-Mail Address
@@ -73,7 +73,7 @@ interface NewsletterSubscriptionInterface
      *
      * @return string
      */
-    public function getEmail();
+    public function getEmail(): string;
 
     /**
      * Get status
@@ -82,5 +82,14 @@ interface NewsletterSubscriptionInterface
      *
      * @return int
      */
-    public function getStatus();
+    public function getStatus(): int;
+
+    /**
+     * Get status
+     *
+     * get the status of the subscription
+     *
+     * @return string
+     */
+    public function getStatusDescription(): string;
 }

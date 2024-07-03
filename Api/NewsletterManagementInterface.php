@@ -12,6 +12,9 @@
 
 namespace MagedIn\NewsletterApi\Api;
 
+use MagedIn\NewsletterApi\Api\Data\NewsletterSubscriptionInterface;
+use MagedIn\NewsletterApi\Api\Data\OperationStatusInterface;
+
 /**
  * Interface NewsletterManagementInterface
  *
@@ -23,31 +26,39 @@ interface NewsletterManagementInterface
      * Get Subscription information for a customer id
      *
      * @param int $customerId
-     * @return \MagedIn\NewsletterApi\Api\Data\NewsletterSubscriptionInterface;
+     * @param int|null $storeId
+     *
+     * @return NewsletterSubscriptionInterface;
      */
-    public function getSubscriptionForCustomer(int $customerId);
+    public function getSubscriptionByCustomerId(int $customerId, int $storeId = null): NewsletterSubscriptionInterface;
 
     /**
      * Subscribe a customer
      *
      * @param int $customerId
-     * @return \MagedIn\NewsletterApi\Api\Data\NewsletterSubscribeResponseInterface;
+     * @param int|null $storeId
+     *
+     * @return OperationStatusInterface
      */
-    public function subscribeCustomer(int $customerId);
+    public function subscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface;
 
     /**
      * Unsubscribe a customer
      *
      * @param int $customerId
-     * @return \MagedIn\NewsletterApi\Api\Data\NewsletterSubscribeResponseInterface;
+     * @param int|null $storeId
+     *
+     * @return OperationStatusInterface ;
      */
-    public function unsubscribeCustomer(int $customerId);
+    public function unsubscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface;
 
     /**
      * Subscribe a guest user with email
      *
      * @param string $email
-     * @return \MagedIn\NewsletterApi\Api\Data\NewsletterSubscribeResponseInterface;
+     * @param int|null $storeId
+     *
+     * @return OperationStatusInterface ;
      */
-    public function subscribe(string $email);
+    public function subscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface;
 }

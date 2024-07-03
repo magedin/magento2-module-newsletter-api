@@ -13,19 +13,23 @@
 namespace MagedIn\NewsletterApi\Model;
 
 use Exception;
+use Laminas\Validator\EmailAddress as EmailAddressValidator;
+use MagedIn\NewsletterApi\Api\Data\NewsletterSubscriptionInterface;
+use MagedIn\NewsletterApi\Api\Data\OperationStatusInterface;
+use MagedIn\NewsletterApi\Api\Data\OperationStatusInterfaceFactory;
 use Magento\Customer\Api\AccountManagementInterface as CustomerAccountManagement;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Phrase;
-use Magento\Framework\Validator\EmailAddress;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Newsletter\Model\ResourceModel\Subscriber as SubscriberResource;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Newsletter\Model\SubscriberFactory;
+use Magento\Newsletter\Model\SubscriptionManager;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use MagedIn\NewsletterApi\Api\Data\NewsletterSubscriptionInterfaceFactory;
 use MagedIn\NewsletterApi\Api\NewsletterManagementInterface;
-use Magento\Framework\DataObject;
-use Zend_Validate;
 
 /**
  * Class NewsletterManagement
@@ -58,86 +62,108 @@ class NewsletterManagement implements NewsletterManagementInterface
      * @var NewsletterSubscriptionInterfaceFactory
      */
     private $newsletterSubscriptionFactory;
+    private SubscriptionManager $subscriptionManager;
+    private SubscriberResource $subscriberResource;
+    private StoreResolver $storeResolver;
+    private DataObjectFactory $dataObjectFactory;
+    private EmailAddressValidator $emailAddressValidator;
+    private OperationStatusInterfaceFactory $operationStatusFactory;
 
     /**
      * NewsletterManagement constructor.
+     *
      * @param SubscriberFactory $subscriberFactory
      * @param StoreManagerInterface $storeManager
      * @param ScopeConfigInterface $scopeConfig
      * @param CustomerAccountManagement $customerAccountManagement
      * @param NewsletterSubscriptionInterfaceFactory $newsletterSubscriptionFactory
+     * @param SubscriptionManager $subscriptionManager
+     * @param SubscriberResource $subscriberResource
+     * @param StoreResolver $storeResolver
+     * @param DataObjectFactory $dataObjectFactory
+     * @param EmailAddressValidator $emailAddressValidator
+     * @param OperationStatusInterfaceFactory $operationStatusFactory
      */
     public function __construct(
         SubscriberFactory $subscriberFactory,
         StoreManagerInterface $storeManager,
         ScopeConfigInterface $scopeConfig,
         CustomerAccountManagement $customerAccountManagement,
-        NewsletterSubscriptionInterfaceFactory $newsletterSubscriptionFactory
+        NewsletterSubscriptionInterfaceFactory $newsletterSubscriptionFactory,
+        SubscriptionManager $subscriptionManager,
+        SubscriberResource $subscriberResource,
+        StoreResolver $storeResolver,
+        EmailAddressValidator $emailAddressValidator,
+        OperationStatusInterfaceFactory $operationStatusFactory
     ) {
         $this->subscriberFactory = $subscriberFactory;
         $this->storeManager = $storeManager;
         $this->customerAccountManagement = $customerAccountManagement;
         $this->scopeConfig = $scopeConfig;
         $this->newsletterSubscriptionFactory = $newsletterSubscriptionFactory;
+        $this->subscriptionManager = $subscriptionManager;
+        $this->subscriberResource = $subscriberResource;
+        $this->storeResolver = $storeResolver;
+        $this->emailAddressValidator = $emailAddressValidator;
+        $this->operationStatusFactory = $operationStatusFactory;
     }
 
     /**
      * @inheritdoc
      */
-    public function getSubscriptionForCustomer($customerId)
+    public function getSubscriptionByCustomerId(int $customerId, int $storeId = null): NewsletterSubscriptionInterface
     {
         $subscriberId = 0;
         $subscriberEmail = '';
         $subscriberStatus = Subscriber::STATUS_UNSUBSCRIBED;
         $subscriberResponse = $this->newsletterSubscriptionFactory->create();
+        $subscriberResponse->setSubscriberId($subscriberId)
+            ->setEmail($subscriberEmail)
+            ->setStatus($subscriberStatus);
+
+        $store = $this->storeResolver->resolve($storeId);
+        $data = $this->subscriberResource->loadByCustomerId($customerId, (int) $store->getWebsiteId());
+        $subscriber = $this->subscriberFactory->create(['data' => $data]);
+
         try {
-            $subscriber = $this->subscriberFactory->create()->loadByCustomerId($customerId);
             if ($subscriber->getId()) {
-                $subscriberResponse->setId($subscriber->getId())
+                $subscriberResponse->setSubscriberId($subscriber->getId())
                     ->setEmail($subscriber->getEmail())
                     ->setStatus($subscriber->getStatus());
-            } else {
-                // if not found any data on subscription
-                $subscriberResponse->setId($subscriberId)
-                    ->setEmail($subscriberEmail)
-                    ->setStatus($subscriberStatus);
             }
         } catch (Exception $exception) {
-            $subscriberResponse->setId($subscriberId)
-                ->setEmail($subscriberEmail)
-                ->setStatus($subscriberStatus);
-        }
 
+        }
         return $subscriberResponse;
     }
 
     /**
      * @inheritdoc
      */
-    public function subscribeCustomer($customerId)
+    public function subscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface
     {
         $success = false;
+        $store = $this->storeResolver->resolve($storeId);
         try {
-            $subscriber = $this->subscriberFactory->create()->subscribeCustomerById($customerId);
+            $subscriber = $this->subscriptionManager->subscribeCustomer($customerId, (int) $store->getId());
             $message = $this->getSubscriptionMessage($subscriber->getStatus());
             $success = true;
         } catch (Exception $exception) {
             $message = $this->handleException($exception);
         }
-
         return $this->getResponseData($success, $message);
     }
 
     /**
      * @inheritdoc
      */
-    public function unsubscribeCustomer($customerId)
+    public function unsubscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface
     {
         $message = '';
         $success = false;
+        $store = $this->storeResolver->resolve($storeId);
         try {
-            $subscriber = $this->subscriberFactory->create()->unsubscribeCustomerById($customerId);
-
+            $subscriber = $this->subscriptionManager->unsubscribeCustomer($customerId, (int) $store->getId());
             if ($subscriber->getStatus() == Subscriber::STATUS_UNSUBSCRIBED) {
                 $message = __('You have been unsubscribed from the newsletter.');
             }
@@ -145,23 +171,25 @@ class NewsletterManagement implements NewsletterManagementInterface
         } catch (Exception $exception) {
             $message = $this->handleException($exception);
         }
-
         return $this->getResponseData($success, $message);
     }
 
     /**
      * @inheritdoc
      */
-    public function subscribe($email)
+    public function subscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface
     {
         $success = false;
-
         try {
+            $store = $this->storeResolver->resolve($storeId);
+
             $this->validateEmailFormat($email);
             $this->validateGuestSubscription();
-            $this->validateEmailAvailable($email);
+            $this->validateEmailAvailable($email, (int) $store->getId());
 
-            $subscriber = $this->subscriberFactory->create()->loadByEmail($email);
+            $data = $this->subscriberResource->loadBySubscriberEmail($email, (int) $store->getWebsiteId());
+            $subscriber = $this->subscriberFactory->create();
+            $subscriber->setData($data);
             if ($subscriber->getId()
                 && $subscriber->getStatus() == Subscriber::STATUS_SUBSCRIBED) {
                 throw new LocalizedException(
@@ -169,13 +197,12 @@ class NewsletterManagement implements NewsletterManagementInterface
                 );
             }
 
-            $status = $this->subscriberFactory->create()->subscribe($email);
-            $message = $this->getSubscriptionMessage($status);
+            $subscriber = $this->subscriptionManager->subscribe($email, (int) $store->getId());
+            $message = $this->getSubscriptionMessage((int) $subscriber->getStatus());
             $success = true;
         } catch (Exception $exception) {
             $message = $this->handleException($exception);
         }
-
         return $this->getResponseData($success, $message);
     }
 
@@ -183,12 +210,15 @@ class NewsletterManagement implements NewsletterManagementInterface
      * Validates that the email address isn't being used by a different account.
      *
      * @param string $email
+     * @param int $storeId
+     *
      * @return void
      * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    protected function validateEmailAvailable(string $email)
+    protected function validateEmailAvailable(string $email, int $storeId)
     {
-        $websiteId = $this->storeManager->getStore()->getWebsiteId();
+        $websiteId = (int) $this->storeResolver->resolve($storeId)->getWebsiteId();
         if (!$this->customerAccountManagement->isEmailAvailable($email, $websiteId)) {
             throw new LocalizedException(
                 __('Please try after login to your account.')
@@ -202,11 +232,10 @@ class NewsletterManagement implements NewsletterManagementInterface
      * @param string $email
      * @return void
      * @throws LocalizedException
-     * @throws \Zend_Validate_Exception
      */
     protected function validateEmailFormat(string $email)
     {
-        if (!Zend_Validate::is($email, EmailAddress::class)) {
+        if (!$this->emailAddressValidator->isValid($email)) {
             throw new LocalizedException(__('Please enter a valid email address.'));
         }
     }
@@ -214,15 +243,19 @@ class NewsletterManagement implements NewsletterManagementInterface
     /**
      * Validates if guest can subscribe to a newsletter.
      *
+     * @param int|null $storeId
+     *
      * @return void
      * @throws LocalizedException
      */
-    protected function validateGuestSubscription()
+    protected function validateGuestSubscription(int $storeId = null)
     {
-        if ($this->scopeConfig->getValue(
-                Subscriber::XML_PATH_ALLOW_GUEST_SUBSCRIBE_FLAG,
-                ScopeInterface::SCOPE_STORE
-            ) != 1) {
+        $configValue = $this->scopeConfig->isSetFlag(
+            Subscriber::XML_PATH_ALLOW_GUEST_SUBSCRIBE_FLAG,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+        if ($configValue !== true) {
             throw new LocalizedException(
                 __('Create an account and try again')
             );
@@ -234,17 +267,14 @@ class NewsletterManagement implements NewsletterManagementInterface
      *
      * @param bool $success
      * @param string $message
-     * @return DataObject
+     *
+     * @return OperationStatusInterface
      */
-    private function getResponseData(bool $success, string $message)
+    private function getResponseData(bool $success, string $message): OperationStatusInterface
     {
-        $data = array(
-            'success' => $success,
-            'message' => $message,
-        );
-
-        $result = new DataObject();
-        $result->setData($data);
+        $result = $this->operationStatusFactory->create();
+        $result->setSuccess($success)
+            ->setMessage($message);
         return $result;
     }
 
@@ -252,26 +282,26 @@ class NewsletterManagement implements NewsletterManagementInterface
      * Get message from exception
      *
      * @param Exception $exception
-     * @return Phrase
+     * @return string
      */
-    private function handleException(Exception $exception)
+    private function handleException(Exception $exception): string
     {
-        return __('There was a problem with the subscription: %1', $exception->getMessage());
+        return (string) __('There was a problem with the subscription: %1', $exception->getMessage());
     }
 
     /**
      * Get successful subscription message
      *
      * @param int $status
-     * @return Phrase
+     * @return string
      */
-    private function getSubscriptionMessage(int $status)
+    private function getSubscriptionMessage(int $status): string
     {
         if ($status == Subscriber::STATUS_NOT_ACTIVE) {
             $message = __('The confirmation request has been sent.');
         } else {
             $message = __('Thank you for your subscription.');
         }
-        return $message;
+        return (string) $message;
     }
 }

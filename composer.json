@@ -1,16 +1,32 @@
 {
-    "name": "mcfadyen/module-newsletter-api",
-    "description": "Newsletter API Extension for Magento 2 helps simply subscribe an email to default newsletter subscriber by calling an API",
+    "name": "magedin/module-newsletter-api",
+    "description": "The MagedIn_NewsletterApi module extends Magento 2's capabilities by providing a comprehensive API for managing newsletter subscriptions. This module allows developers to easily integrate and manage newsletter functionalities through a robust and secure API.",
     "type": "magento2-module",
-    "license": "proprietary",
-    "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "php": "^7.4||^8.0",
+        "magento/module-newsletter": "*"
+    },
+    "license": [
+        "OSL-3.0"
+    ],
+    "authors": [
+        {
+            "name": "MagedIn Technology",
+            "email": "support@magedin.com"
+        }
+    ],
+    "support": {
+        "email": "support@magedin.com"
+    },
     "autoload": {
-        "psr-4": {
-            "MagedIn\\NewsletterApi\\": ""
-        },
         "files": [
             "registration.php"
-        ]
+        ],
+        "psr-4": {
+            "MagedIn\\NewsletterApi\\": ""
+        }
+    },
+    "extra": {
+        "module": "MagedIn_NewsletterApi"
     }
 }

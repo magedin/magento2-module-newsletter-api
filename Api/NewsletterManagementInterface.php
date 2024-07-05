@@ -61,4 +61,14 @@ interface NewsletterManagementInterface
      * @return OperationStatusInterface ;
      */
     public function subscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface;
+
+    /**
+     * Unsubscribe a guest user with email
+     *
+     * @param string $email
+     * @param int|null $storeId
+     *
+     * @return OperationStatusInterface ;
+     */
+    public function unsubscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface;
 }

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The MagedIn_NewsletterApi module extends Magento 2's capabilities by providing a comprehensive API for managing newsletter subscriptions. This module allows developers to easily integrate and manage newsletter functionalities through a robust and secure API.
+The `MagedIn_NewsletterApi` module extends Magento 2's capabilities by providing a comprehensive API for managing newsletter subscriptions. This module allows developers to easily integrate and manage newsletter functionalities through a robust and secure API.
 
 ## Features
 

@@ -11,6 +11,28 @@
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
 
+
+    <route url="/V1/newsletter/subscription/:customerId" method="GET">
+        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="getSubscriptionByCustomerId"/>
+        <resources>
+            <resource ref="Magento_Newsletter::subscriber" />
+        </resources>
+    </route>
+
+    <route url="/V1/newsletter/subscription" method="POST">
+        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="subscribeByCustomerId"/>
+        <resources>
+            <resource ref="Magento_Newsletter::subscriber" />
+        </resources>
+    </route>
+
+    <route url="/V1/newsletter/subscription/delete" method="POST">
+        <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="unsubscribeByCustomerId"/>
+        <resources>
+            <resource ref="Magento_Newsletter::subscriber" />
+        </resources>
+    </route>
+
     <!-- Managing Customer Subscriptions -->
     <route url="/V1/newsletter/subscription/mine" method="GET">
         <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="getSubscriptionByCustomerId"/>
@@ -47,14 +69,10 @@
             <resource ref="anonymous" />
         </resources>
     </route>
-
-    <!-- Managing Guest Subscriptions -->
-    <!--
-    <route url="/V1/newsletter/guest-subscription" method="DELETE">
+    <route url="/V1/newsletter/guest-subscription/delete" method="POST">
         <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="unsubscribeByCustomerEmail"/>
         <resources>
             <resource ref="anonymous" />
         </resources>
     </route>
-    -->
 </routes>

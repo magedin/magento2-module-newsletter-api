@@ -49,10 +49,12 @@
     </route>
 
     <!-- Managing Guest Subscriptions -->
+    <!--
     <route url="/V1/newsletter/guest-subscription" method="DELETE">
         <service class="MagedIn\NewsletterApi\Api\NewsletterManagementInterface" method="unsubscribeByCustomerEmail"/>
         <resources>
             <resource ref="anonymous" />
         </resources>
     </route>
+    -->
 </routes>

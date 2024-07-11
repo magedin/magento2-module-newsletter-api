@@ -28,7 +28,7 @@ interface NewsletterManagementInterface
      * @param int $customerId
      * @param int|null $storeId
      *
-     * @return NewsletterSubscriptionInterface;
+     * @return \MagedIn\NewsletterApi\Api\Data\NewsletterSubscriptionInterface;
      */
     public function getSubscriptionByCustomerId(int $customerId, int $storeId = null): NewsletterSubscriptionInterface;
 
@@ -38,7 +38,7 @@ interface NewsletterManagementInterface
      * @param int $customerId
      * @param int|null $storeId
      *
-     * @return OperationStatusInterface
+     * @return \MagedIn\NewsletterApi\Api\Data\OperationStatusInterface
      */
     public function subscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface;
 
@@ -48,7 +48,7 @@ interface NewsletterManagementInterface
      * @param int $customerId
      * @param int|null $storeId
      *
-     * @return OperationStatusInterface ;
+     * @return \MagedIn\NewsletterApi\Api\Data\OperationStatusInterface
      */
     public function unsubscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface;
 
@@ -58,7 +58,7 @@ interface NewsletterManagementInterface
      * @param string $email
      * @param int|null $storeId
      *
-     * @return OperationStatusInterface ;
+     * @return \MagedIn\NewsletterApi\Api\Data\OperationStatusInterface
      */
     public function subscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface;
 
@@ -68,7 +68,7 @@ interface NewsletterManagementInterface
      * @param string $email
      * @param int|null $storeId
      *
-     * @return OperationStatusInterface ;
+     * @return \MagedIn\NewsletterApi\Api\Data\OperationStatusInterface
      */
     public function unsubscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface;
 }

@@ -30,7 +30,7 @@ interface NewsletterManagementInterface
      *
      * @return \MagedIn\NewsletterApi\Api\Data\NewsletterSubscriptionInterface;
      */
-    public function getSubscriptionByCustomerId(int $customerId, int $storeId = null): NewsletterSubscriptionInterface;
+    public function getSubscriptionByCustomerId(int $customerId, ?int $storeId = null): NewsletterSubscriptionInterface;
 
     /**
      * Subscribe a customer
@@ -40,7 +40,7 @@ interface NewsletterManagementInterface
      *
      * @return \MagedIn\NewsletterApi\Api\Data\OperationStatusInterface
      */
-    public function subscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface;
+    public function subscribeByCustomerId(int $customerId, ?int $storeId = null): OperationStatusInterface;
 
     /**
      * Unsubscribe a customer
@@ -50,7 +50,7 @@ interface NewsletterManagementInterface
      *
      * @return \MagedIn\NewsletterApi\Api\Data\OperationStatusInterface
      */
-    public function unsubscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface;
+    public function unsubscribeByCustomerId(int $customerId, ?int $storeId = null): OperationStatusInterface;
 
     /**
      * Subscribe a guest user with email
@@ -60,7 +60,7 @@ interface NewsletterManagementInterface
      *
      * @return \MagedIn\NewsletterApi\Api\Data\OperationStatusInterface
      */
-    public function subscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface;
+    public function subscribeByCustomerEmail(string $email, ?int $storeId = null): OperationStatusInterface;
 
     /**
      * Unsubscribe a guest user with email
@@ -70,5 +70,5 @@ interface NewsletterManagementInterface
      *
      * @return \MagedIn\NewsletterApi\Api\Data\OperationStatusInterface
      */
-    public function unsubscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface;
+    public function unsubscribeByCustomerEmail(string $email, ?int $storeId = null): OperationStatusInterface;
 }

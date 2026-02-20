@@ -128,7 +128,7 @@ class NewsletterManagement implements NewsletterManagementInterface
     /**
      * @inheritdoc
      */
-    public function getSubscriptionByCustomerId(int $customerId, int $storeId = null): NewsletterSubscriptionInterface
+    public function getSubscriptionByCustomerId(int $customerId, ?int $storeId = null): NewsletterSubscriptionInterface
     {
         $subscriberId = 0;
         $subscriberEmail = '';
@@ -157,7 +157,7 @@ class NewsletterManagement implements NewsletterManagementInterface
     /**
      * @inheritdoc
      */
-    public function subscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface
+    public function subscribeByCustomerId(int $customerId, ?int $storeId = null): OperationStatusInterface
     {
         $success = false;
         $store = $this->storeResolver->resolve($storeId);
@@ -174,7 +174,7 @@ class NewsletterManagement implements NewsletterManagementInterface
     /**
      * @inheritdoc
      */
-    public function unsubscribeByCustomerId(int $customerId, int $storeId = null): OperationStatusInterface
+    public function unsubscribeByCustomerId(int $customerId, ?int $storeId = null): OperationStatusInterface
     {
         $message = '';
         $success = false;
@@ -194,7 +194,7 @@ class NewsletterManagement implements NewsletterManagementInterface
     /**
      * @inheritdoc
      */
-    public function subscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface
+    public function subscribeByCustomerEmail(string $email, ?int $storeId = null): OperationStatusInterface
     {
         try {
             $success = false;
@@ -226,7 +226,7 @@ class NewsletterManagement implements NewsletterManagementInterface
     /**
      * @inheritdoc
      */
-    public function unsubscribeByCustomerEmail(string $email, int $storeId = null): OperationStatusInterface
+    public function unsubscribeByCustomerEmail(string $email, ?int $storeId = null): OperationStatusInterface
     {
         try {
             $success = false;
@@ -257,7 +257,7 @@ class NewsletterManagement implements NewsletterManagementInterface
      *
      * @throws LocalizedException
      */
-    private function checkIfCustomerExists(string $email, int $storeId = null)
+    private function checkIfCustomerExists(string $email, ?int $storeId = null)
     {
         $store = $this->storeResolver->resolve($storeId);
         try {
@@ -320,7 +320,7 @@ class NewsletterManagement implements NewsletterManagementInterface
      * @return void
      * @throws LocalizedException
      */
-    protected function validateGuestSubscription(int $storeId = null)
+    protected function validateGuestSubscription(?int $storeId = null)
     {
         $configValue = $this->scopeConfig->isSetFlag(
             Subscriber::XML_PATH_ALLOW_GUEST_SUBSCRIBE_FLAG,

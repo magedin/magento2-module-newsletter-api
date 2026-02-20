@@ -44,7 +44,7 @@ class StoreResolver
      *
      * @return StoreInterface
      */
-    public function resolve(int $storeId = null): StoreInterface
+    public function resolve(?int $storeId = null): StoreInterface
     {
         try {
             return $this->storeManager->getStore($storeId);
